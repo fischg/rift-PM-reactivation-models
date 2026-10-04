@@ -1,0 +1,22 @@
+# Ignore everything by default
+*
+
+# Allow Git to descend into directories
+!*/
+
+# Track model parameter files
+!*.prm
+
+
+# Track job and utility scripts
+!*.sh
+!*.bash
+
+# Track this .gitignore file itself
+!.gitignore
+
+# Ignore macOS metadata files
+._*
+
+# Ignore ASPECT output directories completely
+output/
