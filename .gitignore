@@ -7,11 +7,6 @@
 # Track model parameter files
 !*.prm
 
-
-# Track job and utility scripts
-!*.sh
-!*.bash
-
 # Track this .gitignore file itself
 !.gitignore
 
