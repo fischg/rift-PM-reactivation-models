@@ -169,15 +169,15 @@ subsection Boundary composition model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
+    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1, tswitch=28e6   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
     set Function expression           = if( (y>Y/2)&(x>=small&x<=(X-small)) , t/1e6 , 0); \  
                                         0; \
                                         0; \
                                         if( (y>Y/2) & (x>=small&x<=(X-small)) , (Y + SeaLevel - y) , 0); \
                                         if( (y>Y/2) & (x>=small&x<=(X-small))  & (t>0) , 1, 0); \
-                                        if( (y>Y/2) & (x>=small&x<=(X-small))  & (t==0), 1 ,  if( (y>Y-Tupper) & ((x<small) || (x>(X-small)))  , 1 , 0 )); \
-                                        if( (y<=Y-Tupper) & (y>Y-(Tupper+Tlower)) & ((x<small) || (x>(X-small)))  , 1 , 0 ); \
-                                        if( (y<=Y-(Tupper+Tlower)) & (y>Y-(Tupper+Tlower+Tmantle_L)) & ((x<small) || (x>(X-small)))  , 1 , 0 )  
+                                        if( (y>Y/2) & (x>=small&x<=(X-small))  & (t==0), 1 ,  if( (y>Y-Tupper) & ((x<small) & (t<tswitch) || (x>(X-small)))  , 1 , 0 )); \
+                                        if( (y<=Y-Tupper) & (y>Y-(Tupper+Tlower)) & ((x<small) & (t<tswitch) || (x>(X-small)))  , 1 , 0 ); \
+                                        if( (y<=Y-(Tupper+Tlower)) & (y>Y-(Tupper+Tlower+Tmantle_L)) & ((x<small) & (t<tswitch) || (x>(X-small)))  , 1 , 0 )  
   end
 end
 
