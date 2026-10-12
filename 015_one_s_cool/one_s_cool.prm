@@ -3,7 +3,7 @@ set Additional shared libraries            = /scratch/usr/bbkgf134/rift_plugins/
 set Resume computation			= auto
 
 set Dimension                              = 2
-set End time                               = 33e6
+set End time                               = 38e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.5
 set Maximum time step			  		   = 5000
