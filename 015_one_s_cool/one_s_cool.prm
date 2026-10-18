@@ -3,7 +3,7 @@ set Additional shared libraries            = /scratch/usr/bbkgf134/rift_plugins/
 set Resume computation			= auto
 
 set Dimension                              = 2
-set End time                               = 38e6
+set End time                               = 40e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.5
 set Maximum time step			  		   = 5000
@@ -262,32 +262,51 @@ subsection Formulation
 end
 
 subsection Boundary velocity model
-  set Prescribed velocity boundary indicators = left x: function, right x: function
+  # Prescribe only horizontal velocities on the lateral boundaries.
+  # Vertical velocities remain free, allowing subsidence and uplift.
+  # Prescribe vertical velocity at the bottom to balance lateral outflow.
+  set Prescribed velocity boundary indicators = left x: function, right x: function, bottom y: function
+
   subsection Function
-    set Coordinate system   = cartesian
-    set Variable names      = x,y,t
-    set Function constants  = tswitch1=28e6, tswitch2=75e6, mm=0.001, yr=1, outflow1=10, outflow2=0, outflow3=-10, Z=200e3, X=450e3 
-    #### Piecewise linear from constant velocities outflow1 to outflow2 within the time intervall defined by tswitch1 and tswitch2
-    set Function expression = if( t<tswitch1 , if(x<100e3, -outflow1*mm/yr, 0) , if( t<tswitch2 , if(x<100e3, -outflow2*0.5*mm/yr, outflow2*0.5*mm/yr) , if(x<100e3, -outflow3*0.5*mm/yr, outflow3*0.5*mm/yr) ) ); 0
+    set Coordinate system = cartesian
+    set Variable names = x,y,t
+
+    # Time is in years, distances in meters, velocities in m/yr.
+    # Extension: 0-28 Myr at 10 mm/yr.
+    # Transition: 28-30 Myr, linearly decreasing to 0 mm/yr.
+    # Post-rift: after 30 Myr, no prescribed horizontal extension.
+    set Function constants = tswitch1=28e6, tswitch2=30e6, \
+                             mm=0.001, yr=1, \
+                             outflow1=10, outflow2=0, \
+                             Z=200e3, X=450e3
+
+    # First expression: horizontal velocity (ux).
+    # Left boundary: negative velocity (outflow).
+    # Right boundary: zero velocity.
+    #
+    # Second expression: bottom vertical velocity (uy).
+    # Positive velocity supplies mantle through the bottom.
+    # uy = U(t)*Z/X, compensating for lateral outflow.
+    # No empirical sedimentation correction is included.
+
+    set Function expression = \
+      if(t<tswitch1, \
+         if(x<100e3, -outflow1*mm/yr, 0), \
+         if(t<tswitch2, \
+            if(x<100e3, -((outflow1-outflow2)/(tswitch2-tswitch1)*(tswitch2-t)+outflow2)*mm/yr, 0), \
+            0)); \
+      if(t<tswitch1, \
+         outflow1*Z/X*mm/yr, \
+         if(t<tswitch2, \
+            ((outflow1-outflow2)/(tswitch2-tswitch1)*(tswitch2-t)+outflow2)*Z/X*mm/yr, \
+            0))
   end
 end
 
-# Make the bottom an open boundary condition so as sediment is added material leaves the bottom, and mass is conserved.
 #subsection Boundary traction model
-#  set Prescribed traction boundary indicators = bottom: initial lithostatic pressure
-#end
-
-#subsection Boundary traction model (OLD)
-#  subsection Initial lithostatic pressure
-#    set Representative point = 5e3,200e3
-#    set Number of integration points = 20000
-#  end
-#end
-
-subsection Boundary traction model
-set Prescribed traction boundary indicators = bottom y: function
- subsection Function
-   set Variable names = x,z
+#set Prescribed traction boundary indicators = bottom y: function
+# subsection Function
+#   set Variable names = x,z
    # We want to prescribe a pressure of 2 at the left boundary
    # and -2 at the right boundary.
    # The traction in this case is defined as:
@@ -298,9 +317,9 @@ set Prescribed traction boundary indicators = bottom y: function
    ## Left boundary:  tau = - pressure(left) (-1;0) = - (2) (-1;0) = (2;0).
    # Right boundary: tau = - pressure(right) (1;0) = - (-2) (1;0) = (2;0).
    # Conveniently, the traction is the same on both boundaries.
-   set Function expression = 130050;6.09605e9
- end
-end
+#   set Function expression = 130050;6.09605e9
+# end
+#end
 
 
 subsection Gravity model
