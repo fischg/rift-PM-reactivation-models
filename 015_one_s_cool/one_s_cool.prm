@@ -3,7 +3,7 @@ set Additional shared libraries            = /scratch/usr/bbkgf134/rift_plugins/
 set Resume computation			= auto
 
 set Dimension                              = 2
-set End time                               = 48e6
+set End time                               = 38e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.5
 set Maximum time step			  		   = 5000
@@ -262,7 +262,7 @@ subsection Formulation
 end
 
 subsection Boundary velocity model
-  set Prescribed velocity boundary indicators = left: function, right: function
+  set Prescribed velocity boundary indicators = left x: function, right x: function
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
