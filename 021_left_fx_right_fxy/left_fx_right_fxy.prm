@@ -169,7 +169,7 @@ subsection Boundary composition model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1, tswitch=40e6   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
+    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1, tswitch=31e6   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
     set Function expression           = if( (y>Y/2)&(x>=small&x<=(X-small)) , t/1e6 , 0); \  
                                         0; \
                                         0; \
@@ -266,7 +266,7 @@ subsection Boundary velocity model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = tramp=2e6, tswitch1=30e6, tswitch2=75e6, mm=0.001, yr=1, outflow1=10, outflow2=0, outflow3=-10, Z=200e3, X=450e3 
+    set Function constants  = tramp=3e6, tswitch1=31e6, tswitch2=75e6, mm=0.001, yr=1, outflow1=10, outflow2=0, outflow3=-10, Z=200e3, X=450e3 
     #### Piecewise linear from constant velocities outflow1 to outflow2 within the time intervall defined by tswitch1 and tswitch2
     set Function expression = if( t<tswitch1-tramp, \
                               if(x<100e3, -outflow1*mm/yr, 0), \
