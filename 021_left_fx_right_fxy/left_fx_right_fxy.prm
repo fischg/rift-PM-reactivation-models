@@ -3,7 +3,7 @@ set Additional shared libraries            = /scratch/usr/bbkgf134/rift_plugins/
 set Resume computation			= auto
 
 set Dimension                              = 2
-set End time                               = 58e6
+set End time                               = 40e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.5
 set Maximum time step			  		   = 5000
@@ -169,7 +169,7 @@ subsection Boundary composition model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1, tswitch=28e6   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
+    set Function constants  = SeaLevel=-5e2, X=450e3, Y=200e3,  Tupper=20e3, Tlower=15e3, Tmantle_L=85e3, small=1, tswitch=40e6   #  Attention: 2D setup only. Make sure to update these parameters according to box size, layer thicknesses and fastscape parameters.
     set Function expression           = if( (y>Y/2)&(x>=small&x<=(X-small)) , t/1e6 , 0); \  
                                         0; \
                                         0; \
@@ -266,10 +266,19 @@ subsection Boundary velocity model
   subsection Function
     set Coordinate system   = cartesian
     set Variable names      = x,y,t
-    set Function constants  = tswitch1=28e6, tswitch2=75e6, mm=0.001, yr=1, outflow1=10, outflow2=0, outflow3=-10, Z=200e3, X=450e3 
+    set Function constants  = tramp=2e6, tswitch1=30e6, tswitch2=75e6, mm=0.001, yr=1, outflow1=10, outflow2=0, outflow3=-10, Z=200e3, X=450e3 
     #### Piecewise linear from constant velocities outflow1 to outflow2 within the time intervall defined by tswitch1 and tswitch2
-    set Function expression = if( t<tswitch1 , if(x<100e3, -outflow1*mm/yr, 0) , if( t<tswitch2 , if(x<100e3, -outflow2*0.5*mm/yr, outflow2*0.5*mm/yr) , if(x<100e3, -outflow3*0.5*mm/yr, outflow3*0.5*mm/yr) ) ); 0
-  end
+    set Function expression = if( t<tswitch1-tramp, \
+                              if(x<100e3, -outflow1*mm/yr, 0), \
+                              if(t<tswitch1, \
+                                 if(x<100e3, -(outflow1 + outflow1*(t-tswitch1)/tramp)*mm/yr, 0), \
+                                 if(t<tswitch2, \
+                                    if(x<100e3, -outflow2*0.5*mm/yr, outflow2*0.5*mm/yr), \
+                                    if(x<100e3, -outflow3*0.5*mm/yr, outflow3*0.5*mm/yr) \
+                                   ) \
+                                ) \
+                             ); 0
+    end
 end
 
 # Make the bottom an open boundary condition so as sediment is added material leaves the bottom, and mass is conserved.
