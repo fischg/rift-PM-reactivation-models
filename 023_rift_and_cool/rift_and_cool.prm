@@ -3,7 +3,7 @@ set Additional shared libraries            = /scratch/usr/bbkgf134/rift_plugins/
 set Resume computation			= auto
 
 set Dimension                              = 2
-set End time                               = 41e6
+set End time                               = 51e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.5
 set Maximum time step			  		   = 5000
@@ -283,7 +283,7 @@ subsection Boundary velocity model
     # From 51 Myr: left = -0.5 mm/yr, right = -1 mm/yr.
     # Net shortening rate = 0.5 mm/yr.
 
-    set Function constants = tramp=3e6, tswitch1=31e6, tswitch2=41e6, \
+    set Function constants = tramp=3e6, tswitch1=31e6, tswitch2=51e6, \
                              mm=0.001, yr=1, \
                              outflow1=10, outflow2=0, compression=1
 
